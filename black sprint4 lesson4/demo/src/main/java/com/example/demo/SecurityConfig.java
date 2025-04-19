@@ -9,7 +9,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.core.userdetails.User;
 
 import org.springframework.security.web.SecurityFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults;
+// import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -33,16 +33,19 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user, admin);
     }
 
-       @Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("students/user/**").hasRole("USER")
-                .requestMatchers("/students/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .csrf(csrf -> csrf.disable())
-            .httpBasic(withDefaults());
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/students/user/**").hasRole("USER")
+                        .requestMatchers("/students/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .defaultSuccessUrl("/students", true) // ✅ redirect after login
+                        .permitAll())
+                .logout(logout -> logout.permitAll())
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

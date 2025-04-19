@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Students</title>
+    <style>
+        #students {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1em;
+
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .student-table thead {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .student-table th,
+        .student-table td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .student-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .student-table tr:hover {
+            background-color: #eef6ff;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        header {
+            background-color: #4a90e2;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Students</h1>
+
+        <p>Logged in as:
+            <span th:if="${roles.contains('ADMIN')}">Admin</span>
+            <span th:if="${roles.contains('USER')}">User</span>
+        </p>
+    </header>
+
+    <div th:if="${roles.contains('ROLE_ADMIN')}">
+        <h2>Add New Student</h2>
+        <form th:action="@{/students}" method="post" th:object="${newStudent}" class="student-form">
+            <label>ID:</label>
+            <input type="number" th:field="*{studentId}" required />
+
+            <label>First Name:</label>
+            <input type="text" th:field="*{firstName}" required />
+
+            <label>Last Name:</label>
+            <input type="text" th:field="*{lastName}" required />
+
+            <label>Grade:</label>
+            <input type="text" th:field="*{grade}" required />
+
+            <button type="submit" class="btn submit-btn">Add Student</button>
+        </form>
+    </div>
+
+    <section id="students">
+
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Grade</th>
+                    <th th:if="${roles.contains('ROLE_ADMIN')}">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.studentId}"></td>
+                    <td th:text="${student.firstName}"></td>
+                    <td th:text="${student.lastName}"></td>
+                    <td th:text="${student.grade}"></td>
+                    <td th:if="${roles.contains('ROLE_ADMIN')}">
+                        <div class="action-buttons">
+                            <form th:action="@{'/students/' + ${student.studentId}}" method="get"
+                                style="display:inline;">
+                                <button type="submit" class="edit-btn">Edit</button>
+                            </form>
+
+                            <!-- Delete Button -->
+                            <form th:action="@{'/students/' + ${student.studentId}}" method="post"
+                                style="display:inline;">
+                                <input type="hidden" name="_method" value="delete" />
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+</body>
+
+</html>

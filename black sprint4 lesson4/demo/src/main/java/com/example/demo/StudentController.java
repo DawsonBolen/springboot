@@ -11,30 +11,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+// import org.springframework.web.bind.annotation.Controller;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/students")
 public class StudentController {
 
     @Autowired
     private JdbcStudentRepository studentRepository;
 
-    @GetMapping(value={"/user", "/admin"})
+    @GetMapping(value = { "/user", "/admin" })
     public List<Student> getAllStudents() {
         return studentRepository.getAllStudents();
     }
 
-    @GetMapping(value={"/user/{id}", "/admin/{id}"})
+    @GetMapping(value = { "/user/{id}", "/admin/{id}" })
     public Student getStudentById(@PathVariable("id") long studentId) {
         return studentRepository.getStudentById(studentId);
     }
 
-    @PutMapping("/{id}/grade")
+    @PutMapping("/admin/{id}/grade")
     public void updateStudentGrade(@PathVariable("id") long studentId, @RequestBody String newGrade) {
         studentRepository.updateStudentGrade(studentId, newGrade);
     }
