@@ -12,6 +12,12 @@
 
         }
 
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -93,68 +99,92 @@
         <h1>Students</h1>
 
         <p>Logged in as:
-            <span th:if="${roles.contains('ADMIN')}">Admin</span>
-            <span th:if="${roles.contains('USER')}">User</span>
+            <span th:if="${roles.contains('ROLE_ADMIN')}">Admin</span>
+            <span th:if="${roles.contains('ROLE_USER')}">User</span>
         </p>
     </header>
 
-    <div th:if="${roles.contains('ROLE_ADMIN')}">
-        <h2>Add New Student</h2>
-        <form th:action="@{/students}" method="post" th:object="${newStudent}" class="student-form">
-            <label>ID:</label>
-            <input type="number" th:field="*{studentId}" required />
+    <div class="container">
+        <div th:if="${roles.contains('ROLE_ADMIN')}">
+            <h2 style="margin-top: 1em;">Add New Student</h2>
+            <form th:action="@{/students}" method="post" th:object="${newStudent}" class="student-form"
+                style="background-color: #f0f8ff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin: 0 auto;">
 
-            <label>First Name:</label>
-            <input type="text" th:field="*{firstName}" required />
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label for="studentId">ID:</label>
+                    <input type="number" th:field="*{studentId}" id="studentId" required
+                        style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
 
-            <label>Last Name:</label>
-            <input type="text" th:field="*{lastName}" required />
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" th:field="*{firstName}" id="firstName" required
+                        style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
 
-            <label>Grade:</label>
-            <input type="text" th:field="*{grade}" required />
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" th:field="*{lastName}" id="lastName" required
+                        style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
 
-            <button type="submit" class="btn submit-btn">Add Student</button>
-        </form>
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label for="grade">Grade:</label>
+                    <input type="text" th:field="*{grade}" id="grade" required
+                        style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+
+                <div style="display: flex; align-items: flex-end;">
+                    <button type="submit" class="submit-btn"
+                        style="background-color: #4a90e2; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        Add Student
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <section id="students">
+
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Grade</th>
+                        <th th:if="${roles.contains('ROLE_ADMIN')}">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="student : ${students}">
+                        <td th:text="${student.studentId}"></td>
+                        <td th:text="${student.firstName}"></td>
+                        <td th:text="${student.lastName}"></td>
+                        <td th:text="${student.grade}"></td>
+                        <td th:if="${roles.contains('ROLE_ADMIN')}">
+                            <div class="action-buttons">
+                                <form th:action="@{'/students/' + ${student.studentId}}" method="get"
+                                    style="display:inline;">
+                                    <button type="submit" class="edit-btn">Edit</button>
+                                </form>
+
+                                <!-- Delete Button -->
+                                <form th:action="@{'/students/admin/' + ${student.studentId}}" method="post"
+                                    style="display:inline;">
+                                    <input type="hidden" name="_method" value="delete" />
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
     </div>
 
-    <section id="students">
 
-        <table class="student-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Grade</th>
-                    <th th:if="${roles.contains('ROLE_ADMIN')}">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="student : ${students}">
-                    <td th:text="${student.studentId}"></td>
-                    <td th:text="${student.firstName}"></td>
-                    <td th:text="${student.lastName}"></td>
-                    <td th:text="${student.grade}"></td>
-                    <td th:if="${roles.contains('ROLE_ADMIN')}">
-                        <div class="action-buttons">
-                            <form th:action="@{'/students/' + ${student.studentId}}" method="get"
-                                style="display:inline;">
-                                <button type="submit" class="edit-btn">Edit</button>
-                            </form>
-
-                            <!-- Delete Button -->
-                            <form th:action="@{'/students/' + ${student.studentId}}" method="post"
-                                style="display:inline;">
-                                <input type="hidden" name="_method" value="delete" />
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-    </section>
 
 </body>
 

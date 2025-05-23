@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 // import org.springframework.http.ResponseEntity;
 // import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 // import org.springframework.web.bind.annotation.PathVariable;
 // import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,8 +42,9 @@ public class StudentController {
     }
 
     @PostMapping
-    public void addStudent(@RequestBody Student student) {
+    public String addStudent(@ModelAttribute Student student) {
         studentRepository.saveStudent(student);
+        return "redirect:/students";
     }
 
     @PutMapping("/{id}")
@@ -51,8 +53,9 @@ public class StudentController {
         studentRepository.updateStudent(student);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable("id") long id) {
+    @DeleteMapping("/admin/{id}")
+    public String deleteStudent(@PathVariable("id") long id) {
         studentRepository.deleteStudentById(id);
+        return "redirect:/students";
     }
 }
